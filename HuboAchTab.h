@@ -56,7 +56,11 @@ public:
     void GRIPStateChange();
 
     DECLARE_DYNAMIC_CLASS(HuboAchTab)
-	DECLARE_EVENT_TABLE()
-        };
+    DECLARE_EVENT_TABLE()
+};
 
 #endif  /* HUBO_ACH_TAB */
+
+// Local Variables:
+// mode: c++
+// End:

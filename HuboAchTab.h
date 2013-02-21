@@ -42,23 +42,27 @@
 #include <Tabs/GRIPTab.h>
 #include <Tools/Constants.h>
 
-class HuboAchTab : public GRIPTab
-{
-public:
-    HuboAchTab(){};
-    HuboAchTab(wxWindow * parent,
-               wxWindowID id = -1,
-               const wxPoint & pos = wxDefaultPosition,
-               const wxSize & size = wxDefaultSize,
-               long style = wxTAB_TRAVERSAL);
-    virtual ~HuboAchTab(){}
 
-    void GRIPStateChange();
+namespace HuboAchTab {
+    
 
-    DECLARE_DYNAMIC_CLASS(HuboAchTab)
-    DECLARE_EVENT_TABLE()
-};
+    class HuboAchTab : public GRIPTab
+    {
+    public:
+        HuboAchTab(){};
+        HuboAchTab(wxWindow * parent,
+                   wxWindowID id = -1,
+                   const wxPoint & pos = wxDefaultPosition,
+                   const wxSize & size = wxDefaultSize,
+                   long style = wxTAB_TRAVERSAL);
+        virtual ~HuboAchTab(){}
 
+        void GRIPStateChange();
+
+        DECLARE_DYNAMIC_CLASS(HuboAchTab)
+        DECLARE_EVENT_TABLE()
+    };
+}
 #endif  /* HUBO_ACH_TAB */
 
 // Local Variables:

@@ -55,9 +55,14 @@ BEGIN_EVENT_TABLE(HuboAchTab, wxPanel)
 END_EVENT_TABLE ()
 
 // Class constructor for the tab: Each tab will be a subclass of GRIPTab
-IMPLEMENT_DYNAMIC_CLASS(HuboAchTab, GRIPTab)
-HuboAchTab::HuboAchTab(wxWindow *parent, const wxWindowID id,
-                       const wxPoint& pos, const wxSize& size, long style) : GRIPTab(parent, id, pos, size, style) {
+IMPLEMENT_DYNAMIC_CLASS(HuboAchTab,
+                        GRIPTab)
+HuboAchTab::HuboAchTab(wxWindow *parent,
+                       const wxWindowID id,
+                       const wxPoint& pos,
+                       const wxSize& size,
+                       long style)
+: GRIPTab(parent, id, pos, size, style) {
 }
 
 // All tabs get a message for certain changes in GRIP (in case they want to do something)

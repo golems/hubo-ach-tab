@@ -44,6 +44,7 @@
 #include <GUI/GUI.h>
 #include <GUI/GRIPSlider.h>
 #include <GUI/GRIPFrame.h>
+#include "HuboController.h"
 using namespace std;
 
 namespace HACHT {
@@ -102,18 +103,41 @@ namespace HACHT {
 
     // scene loaded
     void HuboAchTab::GRIPEventSceneLoaded() {
+        std::string huboname = "GolemHubo";
+        for(int i = 0; i < mWorld->getNumRobots(); i++)
+            if (mWorld->getRobot(i)->getName().compare(huboname) == 0)
+                hubo = mWorld->getRobot(i);
+        if (hubo == NULL) {
+            std::cout << "Could not find hubo!" << std::endl;
+            return;
+        }
+
+        HuboInit();
+        
+        Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        contr = new HuboController(hubo, K_p, K_i, K_d, mWorld->mTime - mWorld->mTimeStep);
+        
+        contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
     }
 
     // scene unloaded
     void HuboAchTab::GRIPEventSceneUnLoaded() {
+        delete contr;
     }
 
     // Before simulation timestep
     void HuboAchTab::GRIPEventSimulationBeforeTimestep() {
+        ReadRefs();
+        hubo->setInternalForces(contr->getTorques(hubo->getPose(),
+                                                  hubo->getQDotVector(),
+                                                  mWorld->mTime));
     }
 
     // After simulation timestep
     void HuboAchTab::GRIPEventSimulationAfterTimestep() {
+        WriteState();
     }
         
     //###########################################################

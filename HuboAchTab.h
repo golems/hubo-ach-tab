@@ -44,6 +44,7 @@
 // DART, GRIP headers
 #include <Tools/Constants.h>
 #include <Tabs/GRIPTab.h>
+#include <robotics/Robot.h>
 
 // HUBO headers
 extern "C" {
@@ -57,9 +58,6 @@ namespace HACHT {
     // forward definition of HuboController becuase HC needs variables
     // from this file
     class HuboController;
-    
-    // Number of joints in the simulated hubo
-    const int NUM_JOINTS = 20;
     
     // map from joints in hubo ach messages to joints in simulated
     // hubo
@@ -117,6 +115,9 @@ namespace HACHT {
     public:
         //###########################################################
         // variables
+        // pointer to the hubo we're controlling
+        robotics::Robot* hubo;
+        // the pid controller we'll use control things
         HuboController* contr;
 
         //###########################################################

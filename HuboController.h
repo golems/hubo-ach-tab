@@ -54,23 +54,36 @@
 namespace HACHT {
     class HuboController {
     public:
-        HuboController(dynamics::SkeletonDynamics* _skel,
-                   const std::vector<int> &_actuatedDofs,
-                   const Eigen::VectorXd &_kP,
-                   const Eigen::VectorXd &_kD,
-                   const std::vector<int> &_ankleDofs,
-                   const Eigen::VectorXd &_anklePGains,
-                   const Eigen::VectorXd &_ankleDGains);
+        //###########################################################
+        // variables
+        Eigen::VectorXd ref_pos;
+        Eigen::VectorXd ref_vel;
+        Eigen::MatrixXd Kp;
+        Eigen::MatrixXd Kd;
+        Eigen::MatrixXd Ki;
+
+        Eigen::VectorXd error_last;
+        Eigen::VectorXd error_deriv;
+        Eigen::VectorXd error_integ;
+
+        double t_last;
+
+        dynamics::SkeletonDynamics* skel;
+
+        //###########################################################
+        // constructors and destructors
+        HuboController(dynamics::SkeletonDynamics* skeleton,
+                       const Eigen::VectorXd p,
+                       const Eigen::VectorXd i,
+                       const Eigen::VectorXd d,
+                       double t_init);
         virtual ~HuboController() {};
 
-        // Returns zero torque for nonactuated DOFs
-        Eigen::VectorXd getTorques(const Eigen::VectorXd& _dof, const Eigen::VectorXd& _dofVel, double _time);
-
-    protected:
-        double targetState[NUM_JOINTS];
-        double K_p[NUM_JOINTS];
-        double K_d[NUM_JOINTS];
-        double K_i[NUM_JOINTS];
+        //###########################################################
+        // Functions
+        Eigen::VectorXd getTorques(const Eigen::VectorXd& cur_pos,
+                                   const Eigen::VectorXd& cur_vel,
+                                   double t);
     };
 }
 

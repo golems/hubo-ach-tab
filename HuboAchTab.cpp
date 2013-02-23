@@ -46,18 +46,30 @@
 #include <GUI/GRIPFrame.h>
 using namespace std;
 
-namespace HuboAchTab {
-    // Control IDs (used for event handling - be sure to start with a non-conflicted id)
+namespace HACHT {
+    //###########################################################
+    //###########################################################
+    //#### Event table
+    //###########################################################
+    //###########################################################
+
+    // Control IDs
     enum HuboAchTabEvents {
+        id_button_startHUBO = wxID_HIGHEST+1,
+        id_button_stopHUBO
     };
 
-    //Add a handlers for UI changes
     BEGIN_EVENT_TABLE(HuboAchTab, wxPanel)
-    END_EVENT_TABLE ()
+    END_EVENT_TABLE()
 
-    // Class constructor for the tab: Each tab will be a subclass of GRIPTab
-    IMPLEMENT_DYNAMIC_CLASS(HuboAchTab,
-                            GRIPTab)
+    //###########################################################
+    //###########################################################
+    //#### Constructor
+    //###########################################################
+    //###########################################################
+
+    IMPLEMENT_DYNAMIC_CLASS(HuboAchTab, GRIPTab)
+
     HuboAchTab::HuboAchTab(wxWindow *parent,
                            const wxWindowID id,
                            const wxPoint& pos,

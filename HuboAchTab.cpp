@@ -78,7 +78,66 @@ namespace HACHT {
     : GRIPTab(parent, id, pos, size, style) {
     }
     
-    // All tabs get a message for certain changes in GRIP (in case they want to do something)
+    //###########################################################
+    //###########################################################
+    //#### wxwidgets UI event handlers
+    //###########################################################
+    //###########################################################
+
+    void onButtonStartHUBO(wxCommandEvent & _evt) {
+    }
+
+    void onButtonStopHUBO(wxCommandEvent & _evt) {
+    }
+
+    //###########################################################
+    //###########################################################
+    //#### GRIPTab hooks
+    //###########################################################
+    //###########################################################
+
+    // tree view selection changed
     void HuboAchTab::GRIPStateChange() {
     }
+
+    // scene loaded
+    void HuboAchTab::GRIPEventSceneLoaded() {
+    }
+
+    // scene unloaded
+    void HuboAchTab::GRIPEventSceneUnLoaded() {
+    }
+
+    // Before simulation timestep
+    void HuboAchTab::GRIPEventSimulationBeforeTimestep() {
+    }
+
+    // After simulation timestep
+    void HuboAchTab::GRIPEventSimulationAfterTimestep() {
+    }
+        
+    //###########################################################
+    //###########################################################
+    //#### HUBO emulation - core functions
+    //###########################################################
+    //###########################################################
+
+    // set up HUBO structures and open and initialize ach channels
+    // and structs.
+    void HuboAchTab::HuboInit() {
+    }
+
+    // read new refs out of ach channels
+    void HuboAchTab::ReadRefs() {
+    }
+
+    // write new state into ach channels
+    void HuboAchTab::WriteState() {
+    }
+
+    //###########################################################
+    //###########################################################
+    //#### HUBO emulation - helpers
+    //###########################################################
+    //###########################################################
 }

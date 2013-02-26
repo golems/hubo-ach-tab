@@ -125,7 +125,7 @@ namespace HACHT {
         contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
 
         if (!HuboInit()) {
-            std::cout << "Failed to initialize hubo. Did you load the right world?" << std::endl;
+            std::cout << "Failed to initialize hubo.\nDid you load the right world and create all your ach channels?" << std::endl;
         }
         else {
             // our channels are open and our robot is loaded, so why

@@ -117,17 +117,28 @@ namespace HACHT {
             std::cout << "Could not find hubo!" << std::endl;
             return;
         }
-
-        if (!HuboInit()) {
-            std::cout << "Failed to initialize hubo. Did you load the right world?" << std::endl;
-        }
         
         Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         contr = new HuboController(hubo, K_p, K_i, K_d, mWorld->mTime - mWorld->mTimeStep);
-        
         contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
+
+        if (!HuboInit()) {
+            std::cout << "Failed to initialize hubo. Did you load the right world?" << std::endl;
+        }
+        else {
+            // our channels are open and our robot is loaded, so why
+            // don't we just start simulating immediately?
+            std::cout << "Automatically starting simulation" << std::endl;
+            frame->continueSimulation = true;
+            wxYield();
+            int type = 0;
+            wxCommandEvent evt(wxEVT_GRIP_SIMULATE_FRAME,GetId());
+            evt.SetEventObject(this);
+            evt.SetClientData((void*)&type);
+            frame->SimulateFrame(evt);
+        }
     }
 
     // scene unloaded
@@ -204,10 +215,14 @@ namespace HACHT {
 
             { WST, FindNamedLink("HNR") }, // Trunk Yaw
         };
+        bool foundalink = false;
         for (auto it = jointmap_phys_to_virtual.begin(); it != jointmap_phys_to_virtual.end(); it++)
+        {
             jointmap_virtual_to_phys[it->second] = it->first;
+            if (it->second != -1) foundalink = true; // did we find at least one link?
+        }
 
-        return true;
+        return foundalink;
     }
 
     // read new refs out of ach channels

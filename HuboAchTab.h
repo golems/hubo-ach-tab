@@ -40,6 +40,10 @@
 
 // general headers
 #include <map>
+#include <cstdlib>
+#include <inttypes.h>
+#include <ctime>
+#include <ach.h>
 
 // DART, GRIP headers
 #include <Tools/Constants.h>
@@ -61,54 +65,7 @@ namespace HACHT {
     
     // map from joints in hubo ach messages to joints in simulated
     // hubo
-    static std::map<int, int> JOINT_TRANSLATION_MAP = {
-        { RHY, 0 }, // Right Hip Yaw
-        { RHR, 0 }, // Right Hip Roll
-        { RHP, 0 }, // Right Hip Pitch
-        { RKN, 0 }, // Right Knee Pitch
-        { RAP, 0 }, // Right Ankle Pitch
-        { RAR, 0 }, // Right Ankle Roll
-
-        { LHY, 0 }, // Left Hip Yaw
-        { LHR, 0 }, // Left Hip Roll
-        { LHP, 0 }, // Left Hip Pitch
-        { LKN, 0 }, // Left Knee Pitch
-        { LAP, 0 }, // Left Ankle Pitch
-        { LAR, 0 }, // Left Ankle Roll
-
-        { RSP, 0 }, // Right Shoulder Pitch
-        { RSR, 0 }, // Right Shoulder Roll
-        { RSY, 0 }, // Right Shoulder Yaw
-        { REB, 0 }, // Right Elbow Pitch
-        { RWY, 0 }, // right wrist yaw
-        { RWR, 0 }, // right wrist roll
-        { RWP, 0 }, // right wrist Pitch
-
-        { LSP, 0 }, // Left Shoulder Pitch
-        { LSR, 0 }, // Left Shoulder Yaw
-        { LSY, 0 }, // Left Shoulder Roll
-        { LEB, 0 }, // Left Elbow Pitch
-        { LWY, 0 }, // left wrist yaw
-        { LWR, 0 }, // left wrist roll
-        { LWP, 0 }, // left wrist pitch
-
-        { NKY, 0 }, // neck yaw
-        { NK1, 0 }, // neck 1
-        { NK2, 0 }, // neck 2
-
-        { WST, 0 }, // Trunk Yaw
-
-        { RF1, 0 }, // Right Finger
-        { RF2, 0 }, // Right Finger
-        { RF3, 0 }, // Right Finger
-        { RF4, 0 }, // Right Finger
-        { RF5, 0 }, // Right Finger
-        { LF1, 0 }, // Left Finger
-        { LF2, 0 }, // Left Finger
-        { LF3, 0 }, // Left Finger
-        { LF4, 0 }, // Left Finger
-        { LF5, 0 } // Left Finger
-    };
+    static std::map<int, int> JOINT_TRANSLATION_MAP;
 
     class HuboAchTab : public GRIPTab
     {
@@ -120,6 +77,10 @@ namespace HACHT {
         // the pid controller we'll use control things
         HuboController* contr;
 
+        // ach channels
+        ach_channel_t chan_hubo_state; // for sending out state
+        ach_channel_t chan_hubo_ref;   // for recieving reference positions
+        
         //###########################################################
         // constructors and destructors
         HuboAchTab(){};
@@ -139,10 +100,12 @@ namespace HACHT {
         void GRIPEventSimulationAfterTimestep();
         
         //###########################################################
-        // HUBO emulation - core functions
-        void HuboInit();
+        // HUBO emulation
+        bool HuboInit();
         void ReadRefs();
         void WriteState();
+
+        int FindNamedLink(std::string lname);
 
         //###########################################################
         // wxwidgets UI event handlers

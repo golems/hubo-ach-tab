@@ -38,13 +38,19 @@
 
 
 #include "HuboAchTab.h"
+#include "HuboController.h"
+
+#include <cstdlib>
+#include <inttypes.h>
+#include <ctime>
+#include <ach.h>
 
 #include <wx/wx.h>
 #include <GUI/Viewer.h>
 #include <GUI/GUI.h>
 #include <GUI/GRIPSlider.h>
 #include <GUI/GRIPFrame.h>
-#include "HuboController.h"
+#include <kinematics/Dof.h>
 using namespace std;
 
 namespace HACHT {
@@ -112,7 +118,9 @@ namespace HACHT {
             return;
         }
 
-        HuboInit();
+        if (!HuboInit()) {
+            std::cout << "Failed to initialize hubo. Did you load the right world?" << std::endl;
+        }
         
         Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
@@ -124,6 +132,8 @@ namespace HACHT {
 
     // scene unloaded
     void HuboAchTab::GRIPEventSceneUnLoaded() {
+        ach_close(&chan_hubo_ref);
+        ach_close(&chan_hubo_state);
         delete contr;
     }
 
@@ -148,15 +158,113 @@ namespace HACHT {
 
     // set up HUBO structures and open and initialize ach channels
     // and structs.
-    void HuboAchTab::HuboInit() {
+    bool HuboAchTab::HuboInit() {
+        int r;
+        // open hubo reference channel
+        r = ach_open(&chan_hubo_ref, HUBO_CHAN_REF_NAME, NULL);
+        if(r != ACH_OK) {
+            std::cout << "Error: failed to open reference channel" << std::endl;
+            return false;
+        }
+        // open hubo state channel
+        r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME, NULL);
+        if(r != ACH_OK) {
+            std::cout << "Error: failed to open state channel" << std::endl;
+            return false;
+        }
+
+        JOINT_TRANSLATION_MAP = {
+            { RHY, FindNamedLink("RHY") }, // Right Hip Yaw
+            { RHR, FindNamedLink("RHR") }, // Right Hip Roll
+            { RHP, FindNamedLink("RHP") }, // Right Hip Pitch
+            { RKN, FindNamedLink("RKP") }, // Right Knee Pitch
+            { RAP, FindNamedLink("RAP") }, // Right Ankle Pitch
+            { RAR, FindNamedLink("RAR") }, // Right Ankle Roll
+
+            { LHY, FindNamedLink("LHY") }, // Left Hip Yaw
+            { LHR, FindNamedLink("LHR") }, // Left Hip Roll
+            { LHP, FindNamedLink("LHP") }, // Left Hip Pitch
+            { LKN, FindNamedLink("LKP") }, // Left Knee Pitch
+            { LAP, FindNamedLink("LAP") }, // Left Ankle Pitch
+            { LAR, FindNamedLink("LAR") }, // Left Ankle Roll
+
+            { RSP, FindNamedLink("RSP") }, // Right Shoulder Pitch
+            { RSR, FindNamedLink("RSR") }, // Right Shoulder Roll
+            { RSY, FindNamedLink("RSY") }, // Right Shoulder Yaw
+            { REB, FindNamedLink("REP") }, // Right Elbow Pitch
+            { RWY, FindNamedLink("RWY") }, // right wrist yaw
+            { RWP, FindNamedLink("RWP") }, // right wrist Pitch
+
+            { LSP, FindNamedLink("LSP") }, // Left Shoulder Pitch
+            { LSR, FindNamedLink("LSR") }, // Left Shoulder Yaw
+            { LSY, FindNamedLink("LSY") }, // Left Shoulder Roll
+            { LEB, FindNamedLink("LEP") }, // Left Elbow Pitch
+            { LWY, FindNamedLink("LWY") }, // left wrist yaw
+            { LWP, FindNamedLink("LWP") }, // left wrist pitch
+
+            { NKY, FindNamedLink("NKY") }, // neck yaw
+            { NK1, FindNamedLink("NK1") }, // neck 1
+            { NK2, FindNamedLink("NK2") }, // neck 2
+
+            { WST, FindNamedLink("HNR") }, // Trunk Yaw
+
+            { RF1, FindNamedLink("RF1") }, // Right Finger
+            { RF2, FindNamedLink("RF2") }, // Right Finger
+            { RF3, FindNamedLink("RF3") }, // Right Finger
+            { RF4, FindNamedLink("RF4") }, // Right Finger
+            { RF5, FindNamedLink("RF5") }, // Right Finger
+            { LF1, FindNamedLink("LF1") }, // Left Finger
+            { LF2, FindNamedLink("LF2") }, // Left Finger
+            { LF3, FindNamedLink("LF3") }, // Left Finger
+            { LF4, FindNamedLink("LF4") }, // Left Finger
+            { LF5, FindNamedLink("LF5") } // Left Finger
+        };
+
+
+        return true;
     }
 
     // read new refs out of ach channels
     void HuboAchTab::ReadRefs() {
+        // define variables
+        hubo_ref_t H_ref;
+        memset(&H_ref, 0, sizeof(H_ref));
+
+        // get data from channel
+        ach_status_t r;                  // result
+        size_t fs;              // received frame size
+        r = ach_get(&chan_hubo_ref, &H_ref, sizeof(H_ref), &fs, NULL, ACH_O_LAST);
+        switch(r) {
+        case ACH_OK:
+            // std::cout << "Got message" << std::endl;
+            break;
+        case ACH_STALE_FRAMES:
+            break;
+        default:
+            std::cout << "Get reference failed: " << ach_result_to_string(r) << std::endl;
+            break;
+        }
+        
+        for (int i = 0; i < HUBO_JOINT_COUNT; i++) {
+            int i_vir = JOINT_TRANSLATION_MAP[i];
+            if (i_vir != -1) {
+                contr->ref_pos[i_vir] = H_ref.ref[i];
+            }
+        }
     }
 
     // write new state into ach channels
     void HuboAchTab::WriteState() {
+        // define variables
+        hubo_state_t H_state;
+        memset(&H_state, 0, sizeof(H_state));
+        // get hubo state from simulator
+        // map from virtual joint indices to physical joint indices
+        // fill out state struct
+        double tsec;
+        H_state.time = mWorld->mTime;
+        // send data to channel
+        ach_put( &chan_hubo_state, &H_state, sizeof(H_state));
     }
 
     //###########################################################
@@ -164,4 +272,15 @@ namespace HACHT {
     //#### HUBO emulation - helpers
     //###########################################################
     //###########################################################
+
+    int HuboAchTab::FindNamedLink(std::string lname) {
+        for (int i = 0; i < hubo->getNumDofs(); i++) {
+            if (lname.compare(hubo->getDof(i)->getName()) == 0) {
+                // std::cout << "Link " << lname << " has index " << i << std::endl;
+                return i;
+            }
+        }
+        // std::cout << "Did not find link " << lname << std::endl;
+        return -1;
+    }
 }

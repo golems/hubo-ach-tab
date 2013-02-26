@@ -173,7 +173,7 @@ namespace HACHT {
             return false;
         }
 
-        JOINT_TRANSLATION_MAP = {
+        jointmap_phys_to_virtual = {
             { RHY, FindNamedLink("RHY") }, // Right Hip Yaw
             { RHR, FindNamedLink("RHR") }, // Right Hip Roll
             { RHP, FindNamedLink("RHP") }, // Right Hip Pitch
@@ -202,24 +202,10 @@ namespace HACHT {
             { LWY, FindNamedLink("LWY") }, // left wrist yaw
             { LWP, FindNamedLink("LWP") }, // left wrist pitch
 
-            { NKY, FindNamedLink("NKY") }, // neck yaw
-            { NK1, FindNamedLink("NK1") }, // neck 1
-            { NK2, FindNamedLink("NK2") }, // neck 2
-
             { WST, FindNamedLink("HNR") }, // Trunk Yaw
-
-            { RF1, FindNamedLink("RF1") }, // Right Finger
-            { RF2, FindNamedLink("RF2") }, // Right Finger
-            { RF3, FindNamedLink("RF3") }, // Right Finger
-            { RF4, FindNamedLink("RF4") }, // Right Finger
-            { RF5, FindNamedLink("RF5") }, // Right Finger
-            { LF1, FindNamedLink("LF1") }, // Left Finger
-            { LF2, FindNamedLink("LF2") }, // Left Finger
-            { LF3, FindNamedLink("LF3") }, // Left Finger
-            { LF4, FindNamedLink("LF4") }, // Left Finger
-            { LF5, FindNamedLink("LF5") } // Left Finger
         };
-
+        for (auto it = jointmap_phys_to_virtual.begin(); it != jointmap_phys_to_virtual.end(); it++)
+            jointmap_virtual_to_phys[it->second] = it->first;
 
         return true;
     }
@@ -246,7 +232,7 @@ namespace HACHT {
         }
         
         for (int i = 0; i < HUBO_JOINT_COUNT; i++) {
-            int i_vir = JOINT_TRANSLATION_MAP[i];
+            int i_vir = jointmap_phys_to_virtual[i];
             if (i_vir != -1) {
                 contr->ref_pos[i_vir] = H_ref.ref[i];
             }
@@ -258,11 +244,33 @@ namespace HACHT {
         // define variables
         hubo_state_t H_state;
         memset(&H_state, 0, sizeof(H_state));
-        // get hubo state from simulator
-        // map from virtual joint indices to physical joint indices
-        // fill out state struct
-        double tsec;
+
+        // fill out joints
+        for (int i = 0; i < hubo->getNumDofs(); i++) {
+            Eigen::VectorXd pos = hubo->getPose();
+            Eigen::VectorXd vel = hubo->getQDotVector();
+            
+            int i_phys = jointmap_virtual_to_phys[i];
+            if (i_phys != -1) {
+                H_state.joint[i_phys].ref = contr->ref_pos[i];
+                H_state.joint[i_phys].pos = pos[i];
+                H_state.joint[i_phys].cur = 0.0;
+                H_state.joint[i_phys].vel = vel[i];
+                H_state.joint[i_phys].heat = 0.0;
+                H_state.joint[i_phys].tmp = 0.0;
+                H_state.joint[i_phys].active = 1;
+                H_state.joint[i_phys].zeroed = false;
+            }
+        }
+        
+
+        // fill out IMU
+        // fill out force-torque
+        // fill out joint statuses
+        // fill out motor controller states
+        // fill out rest of state struct
         H_state.time = mWorld->mTime;
+        H_state.refWait = 0.0;
         // send data to channel
         ach_put( &chan_hubo_state, &H_state, sizeof(H_state));
     }

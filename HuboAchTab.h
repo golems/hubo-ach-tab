@@ -65,7 +65,8 @@ namespace HACHT {
     
     // map from joints in hubo ach messages to joints in simulated
     // hubo
-    static std::map<int, int> JOINT_TRANSLATION_MAP;
+    static std::map<int, int> jointmap_phys_to_virtual;
+    static std::map<int, int> jointmap_virtual_to_phys;
 
     class HuboAchTab : public GRIPTab
     {

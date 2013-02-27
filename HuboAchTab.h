@@ -76,6 +76,10 @@ namespace HACHT {
         // the pid controller we'll use control things
         HuboController* contr;
 
+        // hubo parameters, including joint names
+        hubo_param_t H_param;
+        hubo_state_t H_state;
+
         // ach channels
         ach_channel_t chan_hubo_state; // for sending out state
         ach_channel_t chan_hubo_ref;   // for recieving reference positions

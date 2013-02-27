@@ -44,6 +44,8 @@
 #include <inttypes.h>
 #include <ctime>
 #include <ach.h>
+#include <hubo-jointparams.h>
+#include <hubo.h>
 
 #include <wx/wx.h>
 #include <GUI/Viewer.h>
@@ -83,6 +85,8 @@ namespace HACHT {
                            const wxSize& size,
                            long style)
     : GRIPTab(parent, id, pos, size, style) {
+        memset( &H_param, 0, sizeof(H_param));
+        memset( &H_param, 0, sizeof(H_state));
     }
     
     //###########################################################
@@ -125,7 +129,7 @@ namespace HACHT {
         contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
 
         if (!HuboInit()) {
-            std::cout << "Failed to initialize hubo.\nDid you load the right world and create all your ach channels?" << std::endl;
+            std::cout << "Could not start simulating. Did you load the right world and create all your ach channels?" << std::endl;
         }
         else {
             // our channels are open and our robot is loaded, so why
@@ -170,6 +174,9 @@ namespace HACHT {
     // set up HUBO structures and open and initialize ach channels
     // and structs.
     bool HuboAchTab::HuboInit() {
+        setJointParams(&H_param, &H_state);
+        setSensorDefaults(&H_param);
+        
         int r;
         // open hubo reference channel
         r = ach_open(&chan_hubo_ref, HUBO_CHAN_REF_NAME, NULL);
@@ -184,45 +191,33 @@ namespace HACHT {
             return false;
         }
 
-        jointmap_phys_to_virtual = {
-            { RHY, FindNamedLink("RHY") }, // Right Hip Yaw
-            { RHR, FindNamedLink("RHR") }, // Right Hip Roll
-            { RHP, FindNamedLink("RHP") }, // Right Hip Pitch
-            { RKN, FindNamedLink("RKP") }, // Right Knee Pitch
-            { RAP, FindNamedLink("RAP") }, // Right Ankle Pitch
-            { RAR, FindNamedLink("RAR") }, // Right Ankle Roll
-
-            { LHY, FindNamedLink("LHY") }, // Left Hip Yaw
-            { LHR, FindNamedLink("LHR") }, // Left Hip Roll
-            { LHP, FindNamedLink("LHP") }, // Left Hip Pitch
-            { LKN, FindNamedLink("LKP") }, // Left Knee Pitch
-            { LAP, FindNamedLink("LAP") }, // Left Ankle Pitch
-            { LAR, FindNamedLink("LAR") }, // Left Ankle Roll
-
-            { RSP, FindNamedLink("RSP") }, // Right Shoulder Pitch
-            { RSR, FindNamedLink("RSR") }, // Right Shoulder Roll
-            { RSY, FindNamedLink("RSY") }, // Right Shoulder Yaw
-            { REB, FindNamedLink("REP") }, // Right Elbow Pitch
-            { RWY, FindNamedLink("RWY") }, // right wrist yaw
-            { RWP, FindNamedLink("RWP") }, // right wrist Pitch
-
-            { LSP, FindNamedLink("LSP") }, // Left Shoulder Pitch
-            { LSR, FindNamedLink("LSR") }, // Left Shoulder Yaw
-            { LSY, FindNamedLink("LSY") }, // Left Shoulder Roll
-            { LEB, FindNamedLink("LEP") }, // Left Elbow Pitch
-            { LWY, FindNamedLink("LWY") }, // left wrist yaw
-            { LWP, FindNamedLink("LWP") }, // left wrist pitch
-
-            { WST, FindNamedLink("HNR") }, // Trunk Yaw
+        // special cases map - these joints are named differently
+        // between the physical hubo and the virtual hubo, so we need
+        // to manually define transformations between them.
+        map<std::string, std::string> special_cases = {
+            { "RKN", "RKP" }, // Right Knee Pitch
+            { "LKN", "LKP" }, // Left Knee Pitch
+            { "REB", "REP" }, // Right Elbow Pitch
+            { "LEB", "LEP" }, // Left Elbow Pitch
         };
         bool foundalink = false;
-        for (auto it = jointmap_phys_to_virtual.begin(); it != jointmap_phys_to_virtual.end(); it++)
-        {
-            jointmap_virtual_to_phys[it->second] = it->first;
-            if (it->second != -1) foundalink = true; // did we find at least one link?
+        for(int i = 0; i < HUBO_JOINT_COUNT; i++) {
+            std::string name = std::string(H_param.joint[i].name);
+            if (special_cases.count(name)) { name = special_cases[name]; }
+            int i_vir = FindNamedLink(name);
+            if ((H_state.joint[i].active) && (i_vir != -1)) {
+                jointmap_phys_to_virtual[i] = i_vir;
+                jointmap_virtual_to_phys[i_vir] = i;
+                foundalink = true;
+            }
         }
-
-        return foundalink;
+        
+        if (!foundalink) {
+            std::cout << "Could not find find any links with the right names. Is this the right hubo?" << std::endl;
+            return false;
+        }
+        
+        return true;
     }
 
     // read new refs out of ach channels
@@ -256,10 +251,6 @@ namespace HACHT {
 
     // write new state into ach channels
     void HuboAchTab::WriteState() {
-        // define variables
-        hubo_state_t H_state;
-        memset(&H_state, 0, sizeof(H_state));
-
         // fill out joints
         for (int i = 0; i < hubo->getNumDofs(); i++) {
             Eigen::VectorXd pos = hubo->getPose();
@@ -273,8 +264,6 @@ namespace HACHT {
                 H_state.joint[i_phys].vel = vel[i];
                 H_state.joint[i_phys].heat = 0.0;
                 H_state.joint[i_phys].tmp = 0.0;
-                H_state.joint[i_phys].active = 1;
-                H_state.joint[i_phys].zeroed = false;
             }
         }
         

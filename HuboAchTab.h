@@ -51,9 +51,7 @@
 #include <robotics/Robot.h>
 
 // HUBO headers
-extern "C" {
 #include <hubo.h>
-}
 
 // local headers
 

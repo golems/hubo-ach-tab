@@ -101,6 +101,7 @@ namespace HACHT {
         void GRIPEventSceneUnLoaded();
         void GRIPEventSimulationBeforeTimestep();
         void GRIPEventSimulationAfterTimestep();
+        void GRIPEventRender();
         
         //###########################################################
         // HUBO emulation

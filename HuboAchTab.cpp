@@ -106,7 +106,6 @@ namespace HACHT {
     //#### GRIPTab hooks
     //###########################################################
     //###########################################################
-
     
     void HuboAchTab::GRIPEventRender() {
         static bool loaded = false;
@@ -123,7 +122,7 @@ namespace HACHT {
 
     // scene loaded
     void HuboAchTab::GRIPEventSceneLoaded() {
-        std::string huboname = "GolemHubo";
+        std::string huboname = "huboplus";
         for(int i = 0; i < mWorld->getNumRobots(); i++)
             if (mWorld->getRobot(i)->getName().compare(huboname) == 0)
                 hubo = mWorld->getRobot(i);

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+    <asset>
+        <contributor>
+            <author>VCGLab</author>
+            <authoring_tool>VCGLib | MeshLab</authoring_tool>
+        </contributor>
+        <up_axis>Y_UP</up_axis>
+        <created>Sat Feb 9 18:46:39 2013</created>
+        <modified>Sat Feb 9 18:46:39 2013</modified>
+    </asset>
+    <library_images/>
+    <library_materials/>
+    <library_effects/>
+    <library_geometries>
+        <geometry id="shape0-lib" name="shape0">
+            <mesh>
+                <source id="shape0-lib-positions" name="position">
+                    <float_array id="shape0-lib-positions-array" count="81">-0.0387471 -0.0396265 -0.0883688 -0.0388984 -0.0393894 -0.030923 -0.042225 -0.0350245 -0.0336057 -0.0412426 0.0115848 -0.0300316 -0.0284192 0.0204664 -0.0324675 -0.0439379 -0.00835014 -0.0302567 0.0281144 0.0201844 -0.0324504 -0.0337353 0.0184294 -0.058961 0.00281693 0.0205849 -0.0568072 -0.0415555 0.0105187 -0.0680409 -0.0423642 -0.00697391 -0.0843638 -0.0168747 -0.043856 -0.08391 -0.0219317 -0.043213 -0.0349406 0.00668418 -0.0445494 -0.0364623 -0.0479266 -0.029998 -0.0697595 -0.0491666 -0.0207488 -0.0763396 0.0365871 0.0152778 -0.0621135 -0.0121643 -0.0418061 -0.0916711 0.0354563 -0.0399192 -0.0890559 0.0139721 -0.0440139 -0.0836049 0.03406 -0.0405476 -0.0319214 0.039 0.0108359 -0.0300338 0.0468418 -0.0150892 -0.0763698 0.0470675 -0.00584145 -0.0829445 0.040124 -0.0356154 -0.0846703 0.0398505 -0.036446 -0.0300303 0.0421575 -0.00794268 -0.0309921</float_array>
+                    <technique_common>
+                        <accessor count="27" source="#shape0-lib-positions-array" stride="3">
+                            <param name="X" type="float"/>
+                            <param name="Y" type="float"/>
+                            <param name="Z" type="float"/>
+                        </accessor>
+                    </technique_common>
+                </source>
+                <vertices id="shape0-lib-vertices">
+                    <input semantic="POSITION" source="#shape0-lib-positions"/>
+                </vertices>
+                <triangles count="50">
+                    <input offset="0" semantic="VERTEX" source="#shape0-lib-vertices"/>
+                    <p>0 1 14 0 11 12 0 12 1 1 2 14 2 5 14 5 3 15 3 5 25 3 21 6 3 6 4 3 25 21 4 6 8 4 8 7 4 7 3 3 7 9 3 9 15 5 1 25 5 2 1 16 17 10 9 7 10 10 7 16 7 8 16 9 10 15 10 17 0 10 0 15 0 14 15 19 13 11 11 13 12 17 19 11 17 18 19 1 20 25 1 12 20 12 13 20 18 17 23 0 17 11 15 14 5 6 16 8 16 23 17 24 18 23 24 23 22 18 20 19 19 20 13 21 25 26 21 26 23 21 23 16 21 16 6 25 22 26 22 23 26 22 25 24 24 25 18 18 25 20</p>
+                </triangles>
+            </mesh>
+        </geometry>
+    </library_geometries>
+    <library_visual_scenes>
+        <visual_scene id="VisualSceneNode" name="VisualScene">
+            <node id="node" name="node">
+                <instance_geometry url="#shape0-lib">
+                    <bind_material>
+                        <technique_common/>
+                    </bind_material>
+                </instance_geometry>
+            </node>
+        </visual_scene>
+    </library_visual_scenes>
+    <scene>
+        <instance_visual_scene url="#VisualSceneNode"/>
+    </scene>
+</COLLADA>

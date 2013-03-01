@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2010, Georgia Tech Research Corporation
  * 
  * Humanoid Robotics Lab      Georgia Institute of Technology
@@ -80,10 +80,10 @@ namespace HACHT {
     IMPLEMENT_DYNAMIC_CLASS(HuboAchTab, GRIPTab)
 
     HuboAchTab::HuboAchTab(wxWindow *parent,
-                           const wxWindowID id,
-                           const wxPoint& pos,
-                           const wxSize& size,
-                           long style)
+                               const wxWindowID id,
+                               const wxPoint& pos,
+                               const wxSize& size,
+                               long style)
     : GRIPTab(parent, id, pos, size, style) {
         memset( &H_param, 0, sizeof(H_param));
         memset( &H_param, 0, sizeof(H_state));
@@ -107,6 +107,16 @@ namespace HACHT {
     //###########################################################
     //###########################################################
 
+    
+    void HuboAchTab::GRIPEventRender() {
+        static bool loaded = false;
+        if (!loaded)
+        {
+            loaded = true;
+            frame->DoLoad("/usr/share/hubo-ach-tab/hubo-models/huboplus-empty-world.urdf", false);
+        }
+    }
+    
     // tree view selection changed
     void HuboAchTab::GRIPStateChange() {
     }

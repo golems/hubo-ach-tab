@@ -228,7 +228,21 @@ namespace HACHT {
             std::cout << "Could not find find any joints/dofs with corresponding names. Is this the right hubo?" << std::endl;
             return false;
         }
-        
+
+        // find some links that we'll be putting sensors on
+        hubo_waist = FindNamedNode("Body_Hip");
+        if (hubo_waist == NULL) {
+            std::cout << "Could not find waist. Is this the right hubo?" << std::endl;
+            return false;
+        }
+        hubo_foot_left = FindNamedNode("Body_LAR");
+        hubo_foot_right = FindNamedNode("Body_RAR");
+        if (hubo_foot_left == NULL || hubo_foot_right == NULL) {
+            std::cout << "Could not find feet. Is this the right hubo?" << std::endl;
+            return false;
+        }
+
+        // and done
         return true;
     }
 
@@ -297,14 +311,20 @@ namespace HACHT {
     //###########################################################
     //###########################################################
 
-    int HuboAchTab::FindNamedLink(std::string lname) {
+    int HuboAchTab::FindNamedDof(std::string name) {
         for (int i = 0; i < hubo->getNumDofs(); i++) {
-            if (lname.compare(hubo->getDof(i)->getName()) == 0) {
-                // std::cout << "Link " << lname << " has index " << i << std::endl;
+            if (name.compare(hubo->getDof(i)->getName()) == 0) {
                 return i;
             }
         }
-        // std::cout << "Did not find link " << lname << std::endl;
         return -1;
+    }
+    dynamics::BodyNodeDynamics* HuboAchTab::FindNamedNode(std::string name) {
+        for (int i = 0; i < hubo->getNumNodes(); i++) {
+            if (name.compare(hubo->getNode(i)->getName()) == 0) {
+                return (dynamics::BodyNodeDynamics*)hubo->getNode(i);
+            }
+        }
+        return NULL;
     }
 }

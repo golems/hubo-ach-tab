@@ -49,6 +49,10 @@
 #include <Tools/Constants.h>
 #include <Tabs/GRIPTab.h>
 #include <robotics/Robot.h>
+#include <dynamics/BodyNodeDynamics.h>
+#include <dynamics/SkeletonDynamics.h>
+#include <dynamics/ContactDynamics.h>
+#include <collision/CollisionSkeleton.h>
 
 // HUBO headers
 #include <hubo.h>
@@ -61,11 +65,6 @@ namespace HACHT {
     // from this file
     class HuboController;
     
-    // map from joints in hubo ach messages to joints in simulated
-    // hubo
-    static std::map<int, int> jointmap_phys_to_virtual;
-    static std::map<int, int> jointmap_virtual_to_phys;
-
     class HuboAchTab : public GRIPTab
     {
     public:
@@ -75,6 +74,18 @@ namespace HACHT {
         robotics::Robot* hubo;
         // the pid controller we'll use control things
         HuboController* contr;
+
+        // pointer to particular links in hubo that we'll be doing
+        // special things with
+        dynamics::BodyNodeDynamics* hubo_waist;
+        dynamics::BodyNodeDynamics* hubo_foot_left;
+        dynamics::BodyNodeDynamics* hubo_foot_right;
+
+        // map between joints in hubo ach messages and dofs in
+        // simulated hubo
+        std::map<int, int> jointmap_phys_to_virtual;
+        std::map<int, int> jointmap_virtual_to_phys;
+
 
         // hubo parameters, including joint names
         hubo_param_t H_param;
@@ -109,7 +120,8 @@ namespace HACHT {
         void ReadRefs();
         void WriteState();
 
-        int FindNamedLink(std::string lname);
+        int FindNamedDof(std::string name);
+        dynamics::BodyNodeDynamics* FindNamedNode(std::string name);
 
         //###########################################################
         // wxwidgets UI event handlers

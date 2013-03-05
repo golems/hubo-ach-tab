@@ -36,6 +36,11 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author T. Kunz
+ * @author Saul Reynolds-Haertle
+ */
+
 #pragma once
 
 // general headers

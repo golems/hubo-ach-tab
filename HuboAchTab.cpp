@@ -36,6 +36,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author Saul Reynolds-Haertle
+ */
 
 #include "HuboAchTab.h"
 #include "HuboController.h"

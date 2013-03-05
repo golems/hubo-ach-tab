@@ -115,6 +115,7 @@ namespace HACHT {
         if (!loaded)
         {
             loaded = true;
+            std::cout << "loading installed world from /usr/share/hubo-ach-tab" << std::endl;
             frame->DoLoad("/usr/share/hubo-ach-tab/hubo-models/huboplus-empty-world.urdf", false);
         }
     }

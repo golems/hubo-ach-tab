@@ -122,6 +122,9 @@ namespace HACHT {
 
         int FindNamedDof(std::string name);
         dynamics::BodyNodeDynamics* FindNamedNode(std::string name);
+        void ComputeIMU(hubo_state_t& H_state);
+        void ComputeFTs(hubo_state_t& H_state);
+        Eigen::Vector3d ComputeForceFromParent(dynamics::BodyNodeDynamics* body);
 
         //###########################################################
         // wxwidgets UI event handlers

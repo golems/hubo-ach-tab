@@ -292,17 +292,17 @@ namespace HACHT {
                 H_state.joint[i_phys].tmp = 0.0;
             }
         }
-        
 
         // fill out IMU
-        // fill out force-torque
-        // fill out joint statuses
+        ComputeIMU(H_state);
+        // fill out force-torques
+        ComputeFTs(H_state);
         // fill out motor controller states
         // fill out rest of state struct
         H_state.time = mWorld->mTime;
         H_state.refWait = 0.0;
         // send data to channel
-        ach_put( &chan_hubo_state, &H_state, sizeof(H_state));
+        ach_put(&chan_hubo_state, &H_state, sizeof(H_state));
     }
 
     //###########################################################
@@ -326,5 +326,98 @@ namespace HACHT {
             }
         }
         return NULL;
+    }
+
+    void HuboAchTab::ComputeIMU(hubo_state_t& H_state) {
+        Eigen::Matrix4d world_trans = hubo_waist->getWorldTransform();
+        Eigen::Matrix3d world_rot = world_trans.topLeftCorner(3,3);
+        Eigen::Vector3d acc_lin_loc = hubo_waist->mVelDotBody;
+        Eigen::Vector3d acc_lin_world = world_rot * acc_lin_loc;
+
+        Eigen::Vector3d vel_lin_loc = hubo_waist->mVelBody;
+        Eigen::Vector3d vel_lin_world = world_rot * vel_lin_loc;
+
+        Eigen::Vector3d acc_ang_loc = hubo_waist->mOmegaDotBody;
+        Eigen::Vector3d acc_ang_world = world_rot * acc_ang_loc;
+
+        Eigen::Vector3d pos_lin_world = world_trans.topRightCorner(3,1);
+
+        static Eigen::Vector3d h_last_vel = Eigen::Vector3d(vel_lin_loc);
+        Eigen::Vector3d dv_lin_world = (vel_lin_loc - h_last_vel) / mWorld->mTimeStep - mWorld->mGravity;
+        h_last_vel = Eigen::Vector3d(vel_lin_loc);
+
+
+        std::cout 
+            << "time        "
+            << "pos                          "
+            << "vel                          "
+            << "dv                           "
+            << "acc" 
+            << std::endl;
+        std::cout << std::fixed << std::setprecision(5) << std::showpos;
+        std::cout << mWorld->mTime << " ## ";
+        // std::cout << std::fixed << std::setprecision(2) << std::showpos;
+        std::cout
+            << pos_lin_world.x() << ","
+            << pos_lin_world.y() << ","
+            << pos_lin_world.z() << " | "
+            // << vel_lin_world.norm() << ": " 
+            << vel_lin_world.x() << "," 
+            << vel_lin_world.y() << "," 
+            << vel_lin_world.z() << " | " 
+            // << vel_lin_world.norm() << ": " 
+            << dv_lin_world.x() << "," 
+            << dv_lin_world.y() << "," 
+            << dv_lin_world.z() << " | " 
+            // << acc_lin_world.norm() << ": " 
+            << acc_lin_world.x() << "," 
+            << acc_lin_world.y() << "," 
+            << acc_lin_world.z() 
+            << std::endl;
+        // std::cout << acc_lin_world.norm() << ":" << acc_lin_world.x() << "," << acc_lin_world.y() << "," << acc_lin_world.z() << std::endl;
+        // std::cout << acc_ang_loc.x() << "," << acc_ang_loc.y() << "," << acc_ang_loc.z() << std::endl;
+        // std::cout << acc_ang_world.x() << "," << acc_ang_world.y() << "," << acc_ang_world.z() << std::endl;
+        H_state.imu[IMU].a_x = acc_lin_world.x();
+        H_state.imu[IMU].a_y = acc_lin_world.y();
+        H_state.imu[IMU].a_z = acc_lin_world.z();
+        H_state.imu[IMU].w_x = acc_ang_world.x();
+        H_state.imu[IMU].w_y = acc_ang_world.y();
+        H_state.imu[IMU].w_z = acc_ang_world.z();
+    }
+
+    void HuboAchTab::ComputeFTs(hubo_state_t& H_state) {
+        ComputeForceFromParent(hubo_foot_left);
+    }
+
+    Eigen::Vector3d HuboAchTab::ComputeForceFromParent(dynamics::BodyNodeDynamics* body) {
+        // we want to sum up the forces "above" and "below" the given
+        // body, so we classify body nodes into the proper halves. The
+        // body itself isn't included, which will mean later in the
+        // function that forces betwene the body and its parent will
+        // be included in the "upper" half.
+        typedef enum { upper, lower } body_half_e;
+        std::map<dynamics::BodyNodeDynamics*, body_half_e> bodyhalfmap;
+        std::queue<dynamics::BodyNodeDynamics*> bfs;
+        bfs.push(body);
+        while(!bfs.empty()) {
+            dynamics::BodyNodeDynamics* b = bfs.front();
+            bfs.pop();
+            for(int c = 0; c < b->getNumChildJoints(); c++) {
+                dynamics::BodyNodeDynamics* bc = (dynamics::BodyNodeDynamics*)b->getChildNode(c);
+                bodyhalfmap[bc] = lower;
+                bfs.push(bc);
+            }
+        }
+        for(int k = 0; k < hubo->getNumNodes(); k++) {
+            dynamics::BodyNodeDynamics* b = (dynamics::BodyNodeDynamics*)hubo->getNode(k);
+            if (bodyhalfmap.count(b) == 0) {
+                bodyhalfmap[b] = upper;
+            }
+        }
+
+        int nContacts = mWorld->mCollisionHandle->getCollisionChecker()->getNumContact();
+        for(int k = 0; k < nContacts; k++) {
+            collision_checking::ContactPoint contact = mWorld->mCollisionHandle->getCollisionChecker()->getContact(k);
+        }
     }
 }

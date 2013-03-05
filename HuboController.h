@@ -66,6 +66,8 @@ namespace HACHT {
         Eigen::VectorXd error_deriv;
         Eigen::VectorXd error_integ;
 
+        Eigen::MatrixXd joint_mask;
+
         double t_last;
 
         dynamics::SkeletonDynamics* skel;
@@ -76,6 +78,7 @@ namespace HACHT {
                        const Eigen::VectorXd p,
                        const Eigen::VectorXd i,
                        const Eigen::VectorXd d,
+                       const Eigen::VectorXd mask,
                        double t_init);
         virtual ~HuboController() {};
 

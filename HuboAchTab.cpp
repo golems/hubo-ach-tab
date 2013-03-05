@@ -135,10 +135,13 @@ namespace HACHT {
             return;
         }
         
+        Eigen::VectorXd controller_mask = Eigen::VectorXd::Ones(hubo->getNumDofs());
+        for (int i = 0; i < 5; i++) { controller_mask[i] = 0; }
+        
         Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
-        contr = new HuboController(hubo, K_p, K_i, K_d, mWorld->mTime - mWorld->mTimeStep);
+        contr = new HuboController(hubo, K_p, K_i, K_d, controller_mask, mWorld->mTime - mWorld->mTimeStep);
         contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
 
         if (!HuboInit()) {

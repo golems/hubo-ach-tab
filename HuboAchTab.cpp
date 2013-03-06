@@ -110,8 +110,11 @@ namespace HACHT {
         if (!loaded)
         {
             loaded = true;
-            std::cout << "loading installed world from /usr/share/hubo-ach-tab" << std::endl;
+            std::cout << "trying to load installed world from /usr/share/hubo-ach-tab" << std::endl;
             frame->DoLoad("/usr/share/hubo-ach-tab/hubo-models/huboplus-empty-world.urdf", false);
+            if (mWorld == NULL) {
+                std::cout << "Failed to load installed world. Please load a world with a hubo in it." << std::endl;
+            }
         }
     }
     

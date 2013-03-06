@@ -120,7 +120,8 @@ namespace HACHT {
         
         //###########################################################
         // HUBO emulation
-        bool HuboInit();
+        bool InitHubo();
+        bool InitAch();
         void ReadRefs();
         void WriteState();
 

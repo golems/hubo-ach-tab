@@ -135,33 +135,26 @@ namespace HACHT {
             std::cout << "Could not find hubo!" << std::endl;
             return;
         }
-        else {
-            std::cout << "Found hubo."
-        
-        Eigen::VectorXd controller_mask = Eigen::VectorXd::Ones(hubo->getNumDofs());
-        for (int i = 0; i < 5; i++) { controller_mask[i] = 0; }
-        
-        Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
-        Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
-        Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
-        contr = new HuboController(hubo, K_p, K_i, K_d, controller_mask, mWorld->mTime - mWorld->mTimeStep);
-        contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
 
-        if (!HuboInit()) {
-            std::cout << "Could not start simulating. Did you load the right world and create all your ach channels?" << std::endl;
+        if (!InitHubo()) {
+            std::cout << "Could not initialize hubo. Did you load the right world?" << std::endl;
+            return;
         }
-        else {
-            // our channels are open and our robot is loaded, so why
-            // don't we just start simulating immediately?
-            std::cout << "Automatically starting simulation" << std::endl;
-            frame->continueSimulation = true;
-            wxYield();
-            int type = 0;
-            wxCommandEvent evt(wxEVT_GRIP_SIMULATE_FRAME,GetId());
-            evt.SetEventObject(this);
-            evt.SetClientData((void*)&type);
-            frame->SimulateFrame(evt);
+        if (!InitAch()) {
+            std::cout << "Could not open ach channels. Do the hubo-state and hubo-ref channels exist?" << std::endl;
+            return;
         }
+
+        // our channels are open and our robot is loaded, so why
+        // don't we just start simulating immediately?
+        std::cout << "Automatically starting simulation" << std::endl;
+        frame->continueSimulation = true;
+        wxYield();
+        int type = 0;
+        wxCommandEvent evt(wxEVT_GRIP_SIMULATE_FRAME,GetId());
+        evt.SetEventObject(this);
+        evt.SetClientData((void*)&type);
+        frame->SimulateFrame(evt);
     }
 
     // scene unloaded
@@ -190,26 +183,11 @@ namespace HACHT {
     //###########################################################
     //###########################################################
 
-    // set up HUBO structures and open and initialize ach channels
-    // and structs.
-    bool HuboAchTab::HuboInit() {
+    bool HuboAchTab::InitHubo() {
+        // read out config files from hubo-ach
         setJointParams(&H_param, &H_state);
         setSensorDefaults(&H_param);
         
-        int r;
-        // open hubo reference channel
-        r = ach_open(&chan_hubo_ref, HUBO_CHAN_REF_NAME, NULL);
-        if(r != ACH_OK) {
-            std::cout << "Error: failed to open reference channel" << std::endl;
-            return false;
-        }
-        // open hubo state channel
-        r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME, NULL);
-        if(r != ACH_OK) {
-            std::cout << "Error: failed to open state channel" << std::endl;
-            return false;
-        }
-
         // Map joints from physical hubo to virtual hubo
 
         // these are the special cases - joints where teh names don't
@@ -239,17 +217,46 @@ namespace HACHT {
         // find some links that we'll be putting sensors on
         hubo_waist = FindNamedNode("Body_Hip");
         if (hubo_waist == NULL) {
-            std::cout << "Could not find waist. Is this the right hubo?" << std::endl;
+            std::cout << "Could not find waist link. Is this the right hubo?" << std::endl;
             return false;
         }
         hubo_foot_left = FindNamedNode("Body_LAR");
         hubo_foot_right = FindNamedNode("Body_RAR");
         if (hubo_foot_left == NULL || hubo_foot_right == NULL) {
-            std::cout << "Could not find feet. Is this the right hubo?" << std::endl;
+            std::cout << "Could not find foot links. Is this the right hubo?" << std::endl;
             return false;
         }
 
-        // and done
+        // initialize controller
+        Eigen::VectorXd controller_mask = Eigen::VectorXd::Ones(hubo->getNumDofs());
+        for (int i = 0; i < 5; i++) { controller_mask[i] = 0; }
+        
+        Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
+        contr = new HuboController(hubo, K_p, K_i, K_d, controller_mask, mWorld->mTime - mWorld->mTimeStep);
+        contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
+
+        return true;
+    }
+
+    // set up HUBO structures and open and initialize ach channels
+    // and structs.
+    bool HuboAchTab::InitAch() {
+        int r;
+        // open hubo reference channel
+        r = ach_open(&chan_hubo_ref, HUBO_CHAN_REF_NAME, NULL);
+        if(r != ACH_OK) {
+            std::cout << "Error: failed to open reference channel" << std::endl;
+            return false;
+        }
+        // open hubo state channel
+        r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME, NULL);
+        if(r != ACH_OK) {
+            std::cout << "Error: failed to open state channel" << std::endl;
+            return false;
+        }
+
         return true;
     }
 

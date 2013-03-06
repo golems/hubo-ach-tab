@@ -227,7 +227,6 @@ namespace HACHT {
                 foundajoint = true;
             }
         }
-        
         if (!foundajoint) {
             std::cout << "Could not find find any joints/dofs with corresponding names. Is this the right hubo?" << std::endl;
             return false;
@@ -257,12 +256,11 @@ namespace HACHT {
         memset(&H_ref, 0, sizeof(H_ref));
 
         // get data from channel
-        ach_status_t r;                  // result
-        size_t fs;              // received frame size
+        ach_status_t r;
+        size_t fs;
         r = ach_get(&chan_hubo_ref, &H_ref, sizeof(H_ref), &fs, NULL, ACH_O_LAST);
         switch(r) {
         case ACH_OK:
-            // std::cout << "Got message" << std::endl;
             break;
         case ACH_STALE_FRAMES:
             break;

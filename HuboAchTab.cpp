@@ -280,21 +280,17 @@ namespace HACHT {
     void HuboAchTab::WriteState() {
         // fill out joints
         for (int i = 0; i < hubo->getNumDofs(); i++) {
-            Eigen::VectorXd pos = hubo->getPose();
-            Eigen::VectorXd vel = hubo->getQDotVector();
-            
             int i_phys = jointmap_virtual_to_phys[i];
             if (i_phys != -1) {
                 H_state.joint[i_phys].ref = contr->ref_pos[i];
-                H_state.joint[i_phys].pos = pos[i];
+                H_state.joint[i_phys].pos = hubo->getPose()[i];
                 H_state.joint[i_phys].cur = 0.0;
-                H_state.joint[i_phys].vel = vel[i];
+                H_state.joint[i_phys].vel = hubo->getQDotVector()[i];
                 H_state.joint[i_phys].heat = 0.0;
                 H_state.joint[i_phys].tmp = 0.0;
             }
         }
         
-
         // fill out IMU
         // fill out force-torque
         // fill out joint statuses

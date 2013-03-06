@@ -262,18 +262,17 @@ namespace HACHT {
         switch(r) {
         case ACH_OK:
             break;
+            for (int i = 0; i < HUBO_JOINT_COUNT; i++) {
+                int i_vir = jointmap_phys_to_virtual[i];
+                if (i_vir != -1) {
+                    contr->ref_pos[i_vir] = H_ref.ref[i];
+                }
+            }
         case ACH_STALE_FRAMES:
             break;
         default:
             std::cout << "Get reference failed: " << ach_result_to_string(r) << std::endl;
             break;
-        }
-        
-        for (int i = 0; i < HUBO_JOINT_COUNT; i++) {
-            int i_vir = jointmap_phys_to_virtual[i];
-            if (i_vir != -1) {
-                contr->ref_pos[i_vir] = H_ref.ref[i];
-            }
         }
     }
 

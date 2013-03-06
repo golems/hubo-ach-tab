@@ -1,4 +1,4 @@
-## Hubo-Ach-Tab
+# Hubo-Ach-Tab
 
 A tab that allows the
 [DART](https://github.com/golems/dart)/[GRIP](https://github.com/golems/grip)
@@ -9,7 +9,8 @@ attach to the necessary state and command channels, feeding commands
 to the simulated hubo in DART/GRIP and publishing state updates as
 appropriate.
 
-### Installation
+## Installing dependencies
+===
 
 hubo-ach-tab depends on [dart](https://github.com/golems/dart),
 [grip](https://github.com/golems/grip),
@@ -19,7 +20,7 @@ hubo-ach-tab depends on [dart](https://github.com/golems/dart),
 but recommended for ease of use.
 
 
-#### Using fixed releases of DART and GRIP
+### Using fixed releases of DART and GRIP
 
 DART and GRIP are very unstable. Some hubo-ach-tab users may be happier using
 fixed releases of dart and grip and living with bugs in the code
@@ -27,24 +28,24 @@ instead of bugs in the build system. If you want to do this, hubo-ach-tab
 v0.2 is tagged in the git repository and will work with DART v2.4 and
 GRIP v2.4.
 
-#### Using development versions of DART and GRIP
+### Using development versions of DART and GRIP
 
 You can also install bleeding-edge versions of DART and GRIP by
 compiling from source. In this case, check out, compile, and install
 the master branches of both, and then use the master branch of
 hubo-ach-tab.
 
-#### Ach
+### Ach
 
 Ach can be installed from an apt repository, as descbribed on its
 github page.
 
-#### Hubo-Ach
+### Hubo-Ach
 
 Hubo-ach must be built from source. You can find instructions for how
 to do this on the hubo-ach github page.
 
-#### Hubo-motion-rt
+### Hubo-motion-rt
 
 [hubo-motion-rt](https://github.com/hubo/hubo-motion-rt/) provides a
 useful startup script for hubo-ach and its
@@ -52,7 +53,7 @@ useful startup script for hubo-ach and its
 simple way to test the functionality of the hubo-ach-tab. Instructions
 for building and installing these are at their github pages.
 
-#### A note about debian packages
+### A note about debian packages
 
 All of the dependencies which can be built from source are capable of
 building debian packages, allowing them to be cleanly installed and
@@ -62,7 +63,8 @@ uninstalled using apt. If you are building from source, this is
 using `dpkg-buildpackage` (or pbuilder, if you have it set up). The
 resulting debian packages can be installed using `dpkg -i`.
 
-### Bulding hubo-ach-tab
+## Bulding
+===
 
 hubo-ach-tab builds using cmake. Once all of the dependencies are
 installed, clone the repository (and, if you installed tagged versions
@@ -74,9 +76,10 @@ hubo-ach-tab) and build hubo-ach-tab:
     cmake ..
     make
 
-### Running
+## Running
+===
 
-#### Starting ach channels
+### Starting ach channels
 
 The ach channels for controlling hubo and receiving status updates
 from it must be opened before running hubo-ach-tab. This can be done manually:
@@ -88,6 +91,8 @@ but if you've installed hubo-motion-rt, it's much easier to do this
 using the initscript it provides:
 
     sudo service tech virtual
+
+### Start hubo-ach-tab
 
 Once the ach channels are created, you can run hubo-ach-tab.
 
@@ -104,7 +109,8 @@ hubo-ref channel and publishing its state data to the hubo-state
 channel. You can now run any hubo-ach program you want and it will
 behave as normal.
 
-### Features
+## Features
+===
 
 hubo-ach-tab currently supports position control on all of hubo's
 major joints. It will also report accurate joint positions and

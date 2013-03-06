@@ -220,7 +220,6 @@ namespace HACHT {
             { "REB", "REP" }, // Right Elbow Pitch
             { "LEB", "LEP" }, // Left Elbow Pitch
         };
-        bool foundajoint = false;
         for(int i = 0; i < HUBO_JOINT_COUNT; i++) {
             std::string name = std::string(H_param.joint[i].name);
             if (special_cases.count(name)) { name = special_cases[name]; }
@@ -228,10 +227,10 @@ namespace HACHT {
             if ((H_state.joint[i].active) && (i_vir != -1)) {
                 jointmap_phys_to_virtual[i] = i_vir;
                 jointmap_virtual_to_phys[i_vir] = i;
-                foundajoint = true;
             }
         }
-        if (!foundajoint) {
+
+        if (jointmap_phys_to_virtual.empty() && jointmap_virtual_to_phys.empty()) {
             std::cout << "Could not find find any joints/dofs with corresponding names. Is this the right hubo?" << std::endl;
             return false;
         }

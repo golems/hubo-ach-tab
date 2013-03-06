@@ -70,8 +70,6 @@ namespace HACHT {
 
     // Control IDs
     enum HuboAchTabEvents {
-        id_button_startHUBO = wxID_HIGHEST+1,
-        id_button_stopHUBO
     };
 
     BEGIN_EVENT_TABLE(HuboAchTab, wxPanel)
@@ -100,12 +98,6 @@ namespace HACHT {
     //#### wxwidgets UI event handlers
     //###########################################################
     //###########################################################
-
-    void onButtonStartHUBO(wxCommandEvent & _evt) {
-    }
-
-    void onButtonStopHUBO(wxCommandEvent & _evt) {
-    }
 
     //###########################################################
     //###########################################################

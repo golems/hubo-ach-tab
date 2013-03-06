@@ -129,8 +129,6 @@ namespace HACHT {
 
         //###########################################################
         // wxwidgets UI event handlers
-        void onButtonStartHUBO(wxCommandEvent & _evt);
-        void onButtonStopHUBO(wxCommandEvent & _evt);
 
         //###########################################################
         // Cruft

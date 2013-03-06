@@ -205,9 +205,11 @@ namespace HACHT {
             return false;
         }
 
-        // special cases map - these joints are named differently
-        // between the physical hubo and the virtual hubo, so we need
-        // to manually define transformations between them.
+        // Map joints from physical hubo to virtual hubo
+
+        // these are the special cases - joints where teh names don't
+        // match up perfectly and we have to manually define
+        // correspondences.
         map<std::string, std::string> special_cases = {
             { "RKN", "RKP" }, // Right Knee Pitch
             { "LKN", "LKP" }, // Left Knee Pitch

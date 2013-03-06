@@ -75,7 +75,7 @@ namespace HACHT {
         //###########################################################
         // variables
         // pointer to the hubo we're controlling
-        robotics::Robot* hubo;
+        dynamics::SkeletonDynamics* hubo;
         // the pid controller we'll use control things
         HuboController* contr;
 

@@ -127,9 +127,9 @@ namespace HACHT {
         hubo = NULL;
         std::vector<std::string> hubonames = {"huboplus", "GolemHubo"};
         for(auto it = hubonames.begin(); it != hubonames.end(); it++) {
-            for(int i = 0; i < mWorld->getNumRobots(); i++)
-                if (mWorld->getRobot(i)->getName().compare(*it) == 0)
-                    hubo = mWorld->getRobot(i);
+            for(int i = 0; i < mWorld->getNumSkeletons(); i++)
+                if (mWorld->getSkeleton(i)->getName().compare(*it) == 0)
+                    hubo = mWorld->getSkeleton(i);
         }
         if (hubo == NULL) {
             std::cout << "Could not find hubo!" << std::endl;

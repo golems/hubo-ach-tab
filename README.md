@@ -38,12 +38,12 @@ hubo-ach-tab.
 ### Ach
 
 Ach can be installed from an apt repository, as descbribed on its
-github page.
+[github page](https://github.com/golems/ach).
 
 ### Hubo-Ach
 
 Hubo-ach must be built from source. You can find instructions for how
-to do this on the hubo-ach github page.
+to do this on the hubo-ach [github page](https://github.com/hubo/hubo-ach).
 
 ### Hubo-motion-rt
 
@@ -63,7 +63,7 @@ uninstalled using apt. If you are building from source, this is
 using `dpkg-buildpackage` (or pbuilder, if you have it set up). The
 resulting debian packages can be installed using `dpkg -i`.
 
-## Bulding
+## Building
 ===
 
 hubo-ach-tab builds using cmake. Once all of the dependencies are
@@ -86,7 +86,7 @@ from it must be opened before running hubo-ach-tab. This can be done manually:
 
 	sudo ach -1 -C hubo-ref -m 10 -n 3000 -o 666
 	sudo ach -1 -C hubo-state -m 10 -n 8000 -o 666
-    
+
 but if you've installed hubo-motion-rt, it's much easier to do this
 using the initscript it provides:
 
@@ -97,7 +97,7 @@ using the initscript it provides:
 Once the ach channels are created, you can run hubo-ach-tab.
 
     ./HuboAchTab
-    
+
 You now have to instruct the DART/GRIP simulator to load a world with
 hubo in it. hubo-ach-tab comes with a simple, empty world, which can
 be found in in hubo-models/huboplus-empty-world.urdf. Click File->Load

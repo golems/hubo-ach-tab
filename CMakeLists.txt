@@ -12,7 +12,7 @@ set(HACHT_MINOR_VERSION "1")
 set(HACHT_PATCH_VERSION "0")
 set(PKG_DESC "HACHT is a DART/GRIP application which emulates the HUBO robot using ach.")
 set(HACHT_VERSION "${HACHT_MAJOR_VERSION}.${HACHT_MINOR_VERSION}.${HACHT_PATCH_VERSION}")
-set(PKG_EXTERNAL_DEPS "hubo-ach, hubo-ach-dev, hubo-motion-rt-utils, hubo-motion-rt-dev, ach, grip, dart, flann, ccd, fcl")
+set(PKG_EXTERNAL_DEPS "hubo-ach, hubo-ach-dev, ach, grip, dart, flann, ccd, fcl")
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2 -O3 -std=c++0x")
 set(CMAKE_CXX_FLAGS_PROFILE "-pg" CACHE STRING "Profiling flags")
@@ -32,7 +32,7 @@ find_package(DARTExt REQUIRED)
 find_package(DART REQUIRED CONFIG)
 find_package(GRIP REQUIRED)
 
-# ach, hubo-ach, hubo-motion-rt
+# ach, hubo-ach
 set(ACH_LIBRARIES "/usr/lib/libach.so")
 set(HUBO_LIBRARIES "/usr/lib/libhuboparams.so")
 
@@ -67,7 +67,7 @@ endif()
 set(CPACK_PACKAGE_VERSION_MAJOR ${HACHT_MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${HACHT_MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${HACHT_PATCH_VERSION})
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "dart (>=2.3.0), libwxgtk2.8-dev, libach-dev, hubo-ach-dev, hubo-motion-rt-utils")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "dart (>=2.3.0), libwxgtk2.8-dev, libach-dev, hubo-ach-dev")
 
 set(CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_SYSTEM_NAME}")

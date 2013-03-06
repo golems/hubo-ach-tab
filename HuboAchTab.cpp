@@ -124,14 +124,18 @@ namespace HACHT {
 
     // scene loaded
     void HuboAchTab::GRIPEventSceneLoaded() {
-        std::string huboname = "huboplus";
-        for(int i = 0; i < mWorld->getNumRobots(); i++)
-            if (mWorld->getRobot(i)->getName().compare(huboname) == 0)
-                hubo = mWorld->getRobot(i);
+        std::vector<std::string> hubonames = {"huboplus", "GolemHubo"};
+        for(auto it = hubonames.begin(); it != hubonames.end(); it++) {
+            for(int i = 0; i < mWorld->getNumRobots(); i++)
+                if (mWorld->getRobot(i)->getName().compare(*it) == 0)
+                    hubo = mWorld->getRobot(i);
+        }
         if (hubo == NULL) {
             std::cout << "Could not find hubo!" << std::endl;
             return;
         }
+        else {
+            std::cout << "Found hubo."
         
         Eigen::VectorXd controller_mask = Eigen::VectorXd::Ones(hubo->getNumDofs());
         for (int i = 0; i < 5; i++) { controller_mask[i] = 0; }

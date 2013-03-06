@@ -124,6 +124,7 @@ namespace HACHT {
 
     // scene loaded
     void HuboAchTab::GRIPEventSceneLoaded() {
+        hubo = NULL;
         std::vector<std::string> hubonames = {"huboplus", "GolemHubo"};
         for(auto it = hubonames.begin(); it != hubonames.end(); it++) {
             for(int i = 0; i < mWorld->getNumRobots(); i++)

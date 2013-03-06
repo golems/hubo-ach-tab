@@ -47,8 +47,6 @@
 #include <inttypes.h>
 #include <ctime>
 #include <ach.h>
-#include <hubo-jointparams.h>
-#include <hubo.h>
 #include <iostream>
 #include <iomanip>
 #include <queue>

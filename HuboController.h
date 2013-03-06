@@ -50,9 +50,6 @@
 // dart/grip headers
 #include <dynamics/SkeletonDynamics.h>
 
-// hubo headers
-// #include <hubo.h>
-
 // local headers
 #include "HuboAchTab.h"
 

@@ -59,7 +59,10 @@
 #include <collision/CollisionSkeleton.h>
 
 // HUBO headers
+extern "C" {
 #include <hubo.h>
+#include <hubo-jointparams.h>
+}
 
 // local headers
 

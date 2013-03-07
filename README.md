@@ -99,8 +99,8 @@ Once the ach channels are created, you can run hubo-ach-tab.
     ./HuboAchTab
 
 You now have to instruct the DART/GRIP simulator to load a world with
-hubo in it. hubo-ach-tab comes with a simple, empty world, which can
-be found in in hubo-models/huboplus-empty-world.urdf. Click File->Load
+hubo in it. hubo-ach-tab comes with a simple, hubo-only world, which can
+be found in hubo-models/huboplus-empty-world.urdf. Click File->Load
 and navigate to your world. Once a hubo-containing world is loaded,
 hubo-ach-tab will attempt to connect to the necessary ach channels. If
 it successfully connects, hubo-ach-tab will automatically begin

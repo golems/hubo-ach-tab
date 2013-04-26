@@ -1,7 +1,7 @@
 # Hubo-Ach-Tab
 
 A tab that allows the
-[DART](https://github.com/golems/dart)/[GRIP](https://github.com/golems/grip)
+[DART](https://github.com/dartsim/dart)/[GRIP](https://github.com/dartsim/grip)
 simulation environment to emulate a Hubo robot by pretending to be the
 hardware daemon from
 [hubo-ach](https://github.com/hubo/hubo-ach). When loaded, it will
@@ -12,8 +12,8 @@ appropriate.
 ## Installing dependencies
 ===
 
-hubo-ach-tab depends on [dart](https://github.com/golems/dart),
-[grip](https://github.com/golems/grip),
+hubo-ach-tab depends on [dart](https://github.com/dartsim/dart),
+[grip](https://github.com/dartsim/grip),
 [ach](https://github.com/golems/ach), and
 [hubo-ach](https://github.com/hubo/hubo-ach). Another package,
 [hubo-motion-rt](https://github.com/hubo/hubo-motion-rt/), is optional

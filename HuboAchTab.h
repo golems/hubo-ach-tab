@@ -52,11 +52,11 @@
 // DART, GRIP headers
 #include <Tools/Constants.h>
 #include <Tabs/GRIPTab.h>
-#include <robotics/Robot.h>
+//#include <robotics/Robot.h>
 #include <dynamics/BodyNodeDynamics.h>
 #include <dynamics/SkeletonDynamics.h>
 #include <dynamics/ContactDynamics.h>
-#include <collision/CollisionSkeleton.h>
+#include <collision/CollisionDetector.h>
 
 // HUBO headers
 extern "C" {

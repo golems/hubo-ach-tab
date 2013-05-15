@@ -49,7 +49,7 @@
 #include <dynamics/SkeletonDynamics.h>
 #include <kinematics/Dof.h>
 #include <planning/Trajectory.h>
-#include <utils/UtilsMath.h>
+//#include <utils/UtilsMath.h>
 
 // HUBO headers
 // #include "hubo.h"

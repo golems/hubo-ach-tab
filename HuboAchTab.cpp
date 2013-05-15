@@ -152,7 +152,9 @@ namespace HACHT {
         wxCommandEvent evt(wxEVT_GRIP_SIMULATE_FRAME,GetId());
         evt.SetEventObject(this);
         evt.SetClientData((void*)&type);
+        std::cout << "Simulate Frame" << std::endl;
         frame->SimulateFrame(evt);
+        std::cout << "Seen loaded" << std::endl;
     }
 
     // scene unloaded
@@ -166,8 +168,8 @@ namespace HACHT {
     void HuboAchTab::GRIPEventSimulationBeforeTimestep() {
         ReadRefs();
         hubo->setInternalForces(contr->getTorques(hubo->getPose(),
-                                                  hubo->getQDotVector(),
-                                                  mWorld->mTime));
+                                                  hubo->getPoseVelocity(),
+                                                  mWorld->getTime()));
     }
 
     // After simulation timestep
@@ -232,7 +234,7 @@ namespace HACHT {
         Eigen::VectorXd K_p = 1000.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_i = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
         Eigen::VectorXd K_d = 100.0 * Eigen::VectorXd::Ones(hubo->getNumDofs());
-        contr = new HuboController(hubo, K_p, K_i, K_d, controller_mask, mWorld->mTime - mWorld->mTimeStep);
+        contr = new HuboController(hubo, K_p, K_i, K_d, controller_mask, mWorld->getTime() - mWorld->getTimeStep() );
         contr->ref_pos = Eigen::VectorXd::Zero(hubo->getNumDofs());
 
         return true;
@@ -294,7 +296,7 @@ namespace HACHT {
                 H_state.joint[i_phys].ref = contr->ref_pos[i];
                 H_state.joint[i_phys].pos = hubo->getPose()[i];
                 H_state.joint[i_phys].cur = 0.0;
-                H_state.joint[i_phys].vel = hubo->getQDotVector()[i];
+                H_state.joint[i_phys].vel = hubo->getPoseVelocity()[i];
                 H_state.joint[i_phys].heat = 0.0;
                 H_state.joint[i_phys].tmp = 0.0;
             }
@@ -305,7 +307,7 @@ namespace HACHT {
         // fill out joint statuses
         // fill out motor controller states
         // fill out rest of state struct
-        H_state.time = mWorld->mTime;
+        H_state.time = mWorld->getTime();
         H_state.refWait = 0.0;
         // send data to channel
         ach_put( &chan_hubo_state, &H_state, sizeof(H_state));

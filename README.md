@@ -109,6 +109,20 @@ hubo-ref channel and publishing its state data to the hubo-state
 channel. You can now run any hubo-ach program you want and it will
 behave as normal.
 
+## Installing everything as debian packages
+===
+
+Users that are annoyed by make installs are able to install everything
+in hubo-ach-tab's dependency tree as debian packages. Packages for DART
+and GRIP can be built from source using `cpack -G DEB` in their build
+directory. Packages for hubo-ach and hubo-motion can be built from source
+using `dpkg-buildpackage`. Once the resulting .deb files are installed
+using `dpkg -i <filename>`, a debian package for hubo-ach-tab can be
+build and installed using `cpack -G DEB` and `dpkg -i <filename>`. This
+will additionally install an empty world suitable for use with hubo-ach-tab
+into /usr/share/hubo-ach-tab, which hubo-ach-tab will automatically load
+and begin simulating at startup.
+
 ## Features
 ===
 

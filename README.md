@@ -90,7 +90,7 @@ from it must be opened before running hubo-ach-tab. This can be done manually:
 but if you've installed hubo-motion-rt, it's much easier to do this
 using the initscript it provides:
 
-    sudo service tech virtual
+    sudo service hubo-motion virtual
 
 ### Start hubo-ach-tab
 

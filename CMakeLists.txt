@@ -33,8 +33,9 @@ find_package(DART REQUIRED CONFIG)
 find_package(GRIP REQUIRED)
 
 # ach, hubo-ach
-set(ACH_LIBRARIES "/usr/lib/libach.so")
-set(HUBO_LIBRARIES "/usr/lib/libhuboparams.so")
+
+find_library(ACH_LIBRARIES libach.so)
+find_library(HUBO_LIBRARIES libhuboparams.so)
 
 ###############
 # Actual build process
